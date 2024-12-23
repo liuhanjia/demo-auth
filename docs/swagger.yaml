@@ -1,0 +1,324 @@
+basePath: /
+definitions:
+  controllers.ApiData-any:
+    properties:
+      content:
+        description: 改为 interface{} 类型
+      expires_in:
+        description: 以秒为单位的剩余时间
+        type: integer
+    type: object
+  controllers.ApiData-float64:
+    properties:
+      content:
+        description: 改为 interface{} 类型
+      expires_in:
+        description: 以秒为单位的剩余时间
+        type: integer
+    type: object
+  controllers.ApiData-models_User:
+    properties:
+      content:
+        description: 改为 interface{} 类型
+      expires_in:
+        description: 以秒为单位的剩余时间
+        type: integer
+    type: object
+  controllers.ApiData-string:
+    properties:
+      content:
+        description: 改为 interface{} 类型
+      expires_in:
+        description: 以秒为单位的剩余时间
+        type: integer
+    type: object
+  controllers.ApiResult-any:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/controllers.ApiData-any'
+      error_details:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  controllers.ApiResult-float64:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/controllers.ApiData-float64'
+      error_details:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  controllers.ApiResult-models_User:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/controllers.ApiData-models_User'
+      error_details:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  controllers.ApiResult-string:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/controllers.ApiData-string'
+      error_details:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  controllers.ChangePasswordInput:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  controllers.CheckTokenRequest:
+    properties:
+      token:
+        example: your_jwt_token_here
+        type: string
+    type: object
+  controllers.LoginInput:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  controllers.RefreshTokenInput:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  controllers.RegisterInput:
+    properties:
+      nickname:
+        description: 昵称
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+host: 47.113.103.241:8083
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server for JWT authentication using Gin and Gorm.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: JWT Auth API
+  version: "1.0"
+paths:
+  /auth/check-token:
+    post:
+      consumes:
+      - application/json
+      description: 检查当前 Token 的有效时间
+      parameters:
+      - description: Token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CheckTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token status
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-float64'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "401":
+          description: Invalid token
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+      summary: 检查 Token 是否快过期
+      tags:
+      - 用户
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户通过用户名和密码进行登录
+      parameters:
+      - description: 登录信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "401":
+          description: Invalid password
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+      summary: 用户登录
+      tags:
+      - 用户
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: 使用刷新 Token 获取新的访问 Token
+      parameters:
+      - description: 刷新信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RefreshTokenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: New token
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "401":
+          description: Invalid refresh token
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+      summary: 刷新 Token
+      tags:
+      - 用户
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: 用户通过用户名和密码进行注册
+      parameters:
+      - description: 注册信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User registered successfully
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "500":
+          description: Failed to register user
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+      summary: 用户注册
+      tags:
+      - 用户
+  /user/change-password:
+    post:
+      consumes:
+      - application/json
+      description: 用户通过旧密码修改新密码
+      parameters:
+      - description: 修改密码信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ChangePasswordInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password changed successfully
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-any'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "401":
+          description: Invalid old password
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+        "500":
+          description: Failed to change password
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-string'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改密码
+      tags:
+      - 用户
+  /user/profile:
+    get:
+      description: 获取当前登录用户的信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户信息
+          schema:
+            $ref: '#/definitions/controllers.ApiResult-models_User'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息
+      tags:
+      - 用户
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'JWT Token (format: Bearer <token>)'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
